@@ -14,9 +14,17 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // 🔥 Khởi tạo Firebase Admin SDK
-const serviceAccount = JSON.parse(
-  readFileSync("./firebase/serviceAccountKey.json", "utf-8")
-);
+import fs from "fs";
+
+let serviceAccount = null;
+if (process.env.SERVICE_ACCOUNT_KEY) {
+  // Lấy key từ biến môi trường (Render)
+  serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
+} else {
+  // Khi chạy local, đọc từ file
+  serviceAccount = JSON.parse(fs.readFileSync("./firebase/serviceAccountKey.json", "utf-8"));
+}
+
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
